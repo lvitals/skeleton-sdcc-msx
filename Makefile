@@ -3,12 +3,8 @@ ASM = sdasz80
 PLATFORM = -mz80
 
 MACHINE = Philips_NMS_8255
-# MACHINE = Panasonic_FS-A1FX
-# MACHINE = Panasonic_FS-A1WX
-# MACHINE = Panasonic_FS-A1WSX
 
-EMULATOR = openmsx -machine $(MACHINE) -ext msxdos2 -diska emulation/msx-dos2/ -script emulation/boot.tcl -diskb bin/
-# EMULATOR = openmsx -machine $(MACHINE) -ext msxdos2 -diska emulation/msx-dos2/ -script emulation/boot.tcl 
+EMULATOR = openmsx -machine $(MACHINE) -ext msxdos2 -diska emulation/disk/ -script emulation/boot.tcl
 
 STARTUPDIR = startups
 INCLUDEDIR = includes
@@ -16,7 +12,6 @@ LIBDIR = libs
 SRCDIR = src
 
 # See startup files for the correct ADDR_CODE and ADDR_DATA
-
 # 0x0107 to use crt0msx_msxdos.s
 # 0x0178 to use crt0msx_msxdos_advanced.s
 
@@ -42,7 +37,7 @@ all: clean compile build
 compile: $(OBJECTS) $(SOURCES)
 
 $(CRT0):
-		@echo "Compiling $(CRT0)"Philips_NMS_8255
+		@echo "Compiling $(CRT0)"
 		@$(ASM) -o $(notdir $(@:.s=.rel)) $(STARTUPDIR)/$(CRT0)
 %.s:
 		@echo "Compiling $@"
@@ -60,17 +55,17 @@ $(SOURCES):
 
 build: main.ihx
 		@echo "Building $(OUTFILE)..."
-		mkdir -p bin/
-		objcopy -I ihex main.ihx -O binary bin/${OUTFILE}
+		objcopy -I ihex main.ihx -O binary emulation/disk/${OUTFILE}
 		@echo "Done."
 
 clean:
 		@echo "Cleaning ...."
 		rm -f *.asm *.bin *.cdb *.ihx *.lk *.lst *.map *.mem *.omf *.rst *.rel *.sym *.noi *.hex *.lnk *.dep
-		rm -f bin/$(OUTFILE)
+		rm -f emulation/disk/$(OUTFILE)
 
-emulator:
+test:
+		$(build)
 		mkdir -p ~/.openMSX/share/systemroms/
 		cp emulation/machines/$(MACHINE)/* ~/.openMSX/share/systemroms/
 		cp emulation/extensions/msxdos22/* ~/.openMSX/share/systemroms/
-		$(EMULATOR) &
+		$(EMULATOR)

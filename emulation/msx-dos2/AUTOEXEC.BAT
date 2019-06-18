@@ -1,3 +1,0 @@
-REM mode 80
-REM B:
-REM echo BOOT COMPLETED

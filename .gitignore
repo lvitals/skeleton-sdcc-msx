@@ -1,5 +1,5 @@
 .DS_Store
-bin/
+emulation/disk/main.com
 *.asm
 *.bin
 *.cdb
